@@ -1,6 +1,6 @@
 # Azure Kubernetes Services
 
-### Refrences
+## Refrences
 Azure AKS Kubernetes - Masterclass | Azure DevOps, Terraform: https://github.com/stacksimplify/azure-aks-kubernetes-masterclass
 
 Azure DevOps for Kubernetes Workloads running on Azure AKS Cluster: https://github.com/stacksimplify/azure-devops-github-acr-aks-app1
