@@ -1,5 +1,9 @@
 # Azure Kubernetes Services
 
+```
+kubectl run nginx-test --image=nginx
+
+```
 ## Refrences
 Azure AKS Kubernetes - Masterclass | Azure DevOps, Terraform: https://github.com/stacksimplify/azure-aks-kubernetes-masterclass
 
