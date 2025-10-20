@@ -3,6 +3,8 @@
 ```
 kubectl run nginx-test --image=nginx
 
+az provider register --namespace Microsoft.ContainerRegistry
+az provider show -n Microsoft.ContainerRegistry
 ```
 ## Refrences
 Azure AKS Kubernetes - Masterclass | Azure DevOps, Terraform: https://github.com/stacksimplify/azure-aks-kubernetes-masterclass
