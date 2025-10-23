@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash 
 # ================================================================
 # AKS Demo Cluster Setup Script (Public API + Free Tier)
 # Author: Dilip
@@ -29,16 +29,6 @@ ZONES="1 3"
 echo "======================================================"
 echo " 🚀 Starting AKS Demo Cluster Setup (Public API)"
 echo "======================================================"
-echo ""
-
-# Step 0: Detect Public IP
-echo "➡️  Detecting your public IP address..."
-MY_IP=$(curl -s ifconfig.me)
-if [[ -z "$MY_IP" ]]; then
-  echo "❌ Could not detect public IP. Please check your internet connection."
-  exit 1
-fi
-echo "✅ Your public IP is: $MY_IP"
 echo ""
 
 # Step 1: Create Resource Group
@@ -72,12 +62,11 @@ SUBNET_ID=$(az network vnet subnet show \
 echo "✅ Subnet ID retrieved: $SUBNET_ID"
 echo ""
 
-# Step 4: Create AKS Cluster with Public Endpoint
+# Step 4: Create AKS Cluster
 echo "➡️  Creating AKS cluster: $CLUSTER_NAME ..."
 echo "   Kubernetes version: $K8S_VERSION"
 echo "   Node size: $NODE_SIZE"
 echo "   Autoscaler: $MIN_COUNT - $MAX_COUNT"
-echo "   Authorized IP Range: ${MY_IP}/32"
 echo "   This may take 10–15 minutes..."
 echo ""
 
@@ -102,7 +91,6 @@ az aks create \
   --nodepool-name "$NODEPOOL_NAME" \
   --enable-managed-identity \
   --generate-ssh-keys \
-  --api-server-authorized-ip-ranges ${MY_IP}/32 \
   -o table
 
 echo "✅ AKS cluster created successfully!"
@@ -134,6 +122,5 @@ echo " Cluster Name: $CLUSTER_NAME"
 echo " Resource Group: $RESOURCE_GROUP"
 echo " Region: $LOCATION"
 echo " Public FQDN: $CLUSTER_FQDN"
-echo " Accessible from IP: ${MY_IP}/32"
 echo "======================================================"
 

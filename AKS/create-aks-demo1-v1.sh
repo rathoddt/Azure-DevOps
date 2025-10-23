@@ -1,11 +1,11 @@
 #!/bin/bash
 # ================================================================
 # AKS Demo Cluster Setup Script (Public API + Free Tier)
-# Author: Dilip
-# Purpose: Create a cost-efficient AKS cluster for dev/test use
+# Author: Dilip Rathod
+# Purpose: Create a cost-efficient AKS cluster and attach ACR
 # ================================================================
 
-set -e  # Exit immediately on error
+set -e  # Exit immediately if any command fails
 
 # ------------------ CONFIGURATION ------------------
 RESOURCE_GROUP="aks-rg"
@@ -14,7 +14,7 @@ VNET_NAME="aks-vnet"
 SUBNET_NAME="aks-subnet"
 CLUSTER_NAME="aks-demo1"
 NODEPOOL_NAME="nodepool1"
-NODE_SIZE="Standard_D2s_v3"
+NODE_SIZE="Standard_D2plds_v6"
 MIN_COUNT=2
 MAX_COUNT=5
 K8S_VERSION="1.33.3"
@@ -24,6 +24,7 @@ DNS_IP="10.0.0.10"
 DOCKER_BRIDGE="172.17.0.1/16"
 VNET_CIDR="10.224.0.0/16"
 ZONES="1 3"
+ACR_NAME="dilipregistry"
 
 # ------------------ SCRIPT START ------------------
 echo "======================================================"
@@ -108,6 +109,12 @@ az aks create \
 echo "✅ AKS cluster created successfully!"
 echo ""
 
+# Step 4.1: Attach ACR permissions
+echo "➡️  Attaching ACR '$ACR_NAME' to AKS cluster ..."
+az aks update -n "$CLUSTER_NAME" -g "$RESOURCE_GROUP" --attach-acr "$ACR_NAME"
+echo "✅ ACR successfully attached to AKS cluster."
+echo ""
+
 # Step 5: Get Cluster FQDN (Public API Endpoint)
 echo "➡️  Retrieving AKS public endpoint FQDN..."
 CLUSTER_FQDN=$(az aks show \
@@ -128,6 +135,20 @@ echo "➡️  Verifying cluster nodes..."
 kubectl get nodes -o wide || echo "⚠️  kubectl not found or not configured yet."
 echo ""
 
+# Step 8: Validate ACR image pull
+echo "➡️  Testing ACR integration by pulling image from '$ACR_NAME' ..."
+kubectl run acr-test --image="$ACR_NAME.azurecr.io/aznginx:latest" --restart=Never || echo "⚠️  Validation failed: Check image name or ACR permissions."
+echo ""
+echo "✅ If pod starts successfully, ACR integration works fine!"
+echo ""
+
+# Step 9: Cleanup hint
+echo "------------------------------------------------------"
+echo "🧹 To delete all resources later, run:"
+echo "az group delete --name $RESOURCE_GROUP --yes --no-wait"
+echo "------------------------------------------------------"
+echo ""
+
 echo "======================================================"
 echo " 🎉 AKS Demo Cluster Setup Complete!"
 echo " Cluster Name: $CLUSTER_NAME"
@@ -135,5 +156,6 @@ echo " Resource Group: $RESOURCE_GROUP"
 echo " Region: $LOCATION"
 echo " Public FQDN: $CLUSTER_FQDN"
 echo " Accessible from IP: ${MY_IP}/32"
+echo " ACR Attached: $ACR_NAME"
 echo "======================================================"
 
