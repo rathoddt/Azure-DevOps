@@ -5,14 +5,19 @@ kubectl run nginx-test --image=nginx
 
 az provider register --namespace Microsoft.ContainerRegistry
 az provider show -n Microsoft.ContainerRegistry
+
+kubectl apply -f 01-pod-definition.yaml --validate=false
+
 ```
 ## Refrences
-Azure AKS Kubernetes - Masterclass | Azure DevOps, Terraform: https://github.com/stacksimplify/azure-aks-kubernetes-masterclass
+- https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
 
-Azure DevOps for Kubernetes Workloads running on Azure AKS Cluster: https://github.com/stacksimplify/azure-devops-github-acr-aks-app1
+- Azure AKS Kubernetes - Masterclass | Azure DevOps, Terraform: https://github.com/stacksimplify/azure-aks-kubernetes-masterclass
 
-Provision Azure AKS Cluster using Terraform and Azure DevOps: https://github.com/stacksimplify/azure-devops-aks-kubernetes-terraform-pipeline
+- Azure DevOps for Kubernetes Workloads running on Azure AKS Cluster: https://github.com/stacksimplify/azure-devops-github-acr-aks-app1
 
-Docker Fundamentals: https://github.com/stacksimplify/docker-fundamentals
+- Provision Azure AKS Cluster using Terraform and Azure DevOps: https://github.com/stacksimplify/azure-devops-aks-kubernetes-terraform-pipeline
 
-Presentation with 250 Slides outlining the various architectures and designs we are going to do in this course: https://github.com/stacksimplify/azure-aks-kubernetes-masterclass/tree/master/ppt-presentation
+- Docker Fundamentals: https://github.com/stacksimplify/docker-fundamentals
+
+- Presentation with 250 Slides outlining the various architectures and designs we are going to do in this course: https://github.com/stacksimplify/azure-aks-kubernetes-masterclass/tree/master/ppt-presentation
