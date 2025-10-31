@@ -1,0 +1,7 @@
+{
+  "tenantId": "79bfd684-1bb4-4b84-9e57-b3e35d18d574",
+  "subscriptionId": "3c26c0eb-93cc-4835-b02f-43b6f2777fda",
+  "resourceGroup": "dns-zonres-rg", 
+  "useManagedIdentityExtension": true,
+  "userAssignedIdentityID": "e330b1ad-d922-4e41-8bcb-aa19f20098b0"
+}
