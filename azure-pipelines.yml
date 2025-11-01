@@ -7,7 +7,9 @@ trigger:
 - main
 
 pool:
-  vmImage: ubuntu-latest
+  name: Linux-AP
+  demands:
+  - agent.name -equals docker-vm
 
 steps:
 - script: echo Hello, world!
