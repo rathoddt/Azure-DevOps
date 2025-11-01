@@ -18,3 +18,9 @@ history | cut -c 8-
 
 sudo ./svc.sh uninstall
 ```
+
+### Azure Pipeline
+
+```
+** - folder/directory level/local
+```
