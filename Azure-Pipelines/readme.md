@@ -15,4 +15,6 @@ sudo ./svc.sh start
 sudo ./svc.sh status
 history -w /dev/stdout
 history | cut -c 8-
+
+sudo ./svc.sh uninstall
 ```
