@@ -15,3 +15,10 @@ ssh azureuser@<IP Address>
 scp udemy-webapp.zip azureuser@74.225.159.133:/home/azureuser/
 
 ```
+
+## AKS
+
+```
+#Deleting cluster
+az group delete --name "aks-rg2" --yes --no-wait
+```
