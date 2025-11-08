@@ -33,7 +33,7 @@ stages:
       - task: Maven@4
         inputs:
           azureSubscription: 'webapp-01'
-          mavenPomFile: 'pom.xml'
+          mavenPomFile: 'Azure-Pipelines/Java-App-with-Deployment/pom.xml'
           publishJUnitResults: true
           testResultsFiles: '**/surefire-reports/TEST-*.xml'
           javaHomeOption: 'JDKVersion'
