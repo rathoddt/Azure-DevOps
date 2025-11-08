@@ -76,7 +76,7 @@ stages:
                 scriptLocation: 'inlineScript'
                 inlineScript: |
                   # Create a resource group
-                        az group create --location eastus2 --name $(rg)
+                        az group create --location centralus --name $(rg)
                                                       
                         # Create an app service plan of type Linux
                         az appservice plan create -g $(rg) -n myapp-service-plan --is-linux
