@@ -10,7 +10,7 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  rg: 'az-java-app'
+  rg: 'az-java-app-d-001'
 
 # steps:
 # - script: echo Hello, world!
