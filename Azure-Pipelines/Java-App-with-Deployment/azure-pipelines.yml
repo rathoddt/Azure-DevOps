@@ -1,0 +1,105 @@
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  rg: 'devopsmela-rg'
+
+stages:
+- stage: Build
+  displayName: Build
+  jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+    # - task: SonarQubePrepare@6
+    #   inputs:
+    #     SonarQube: 'sonar-scan'
+    #     scannerMode: 'Other'
+    #     extraProperties: |
+    #       # Additional properties that will be passed to the scanner,
+    #       # Put one key=value per line, example:
+    #       # sonar.exclusions=**/*.bin
+    #       sonar.projectKey=Azure_DevSecOps_09_java-springboot_b46a900f-d64c-4fb0-8dc4-2f730c313295
+    #       sonar.projectName=java-springboot
+    #       sonar.qualitygate.wait=true
+    #       sonar.qualitygate.timeout=300
+
+    # - task: JavaToolInstaller@0
+    #   inputs:
+    #     versionSpec: '17'
+    #     jdkArchitectureOption: 'x64'
+    #     jdkSourceOption: 'PreInstalled'
+
+    - task: Maven@4
+      inputs:
+        mavenPomFile: 'pom.xml'
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        codeCoverageToolOption: 'JaCoCo'
+        javaHomeOption: 'JDKVersion'
+        mavenVersionOption: 'Default'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: false
+        # sqMavenPluginVersionChoice: 'latest'
+
+    # - task: SonarQubePublish@6
+    #   inputs:
+    #     pollingTimeoutSec: '300'
+
+    # - task: WhiteSource@21
+    #   inputs:
+    #     cwd: '$(System.DefaultWorkingDirectory)'
+        
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: '$(System.DefaultWorkingDirectory)'
+        Contents: '**/target/*.?(war|jar)'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'drop'
+        publishLocation: 'Container'
+
+- stage: Deploy
+  displayName: Deploy Stage
+  dependsOn: Build
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy
+    pool:
+      vmImage: ubuntu-latest
+    environment: Dev
+    strategy:
+     runOnce:
+       deploy:
+         steps:
+            - task: AzureCLI@2
+              inputs:
+                azureSubscription: 'azdevsecops10-Udemy01' # Add you own service conection details
+                scriptType: 'bash'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  # Create a resource group
+                        az group create --location eastus2 --name $(rg)
+                                                      
+                        # Create an app service plan of type Linux
+                        az appservice plan create -g $(rg) -n myapp-service-plan --is-linux
+                                                      
+                        # Create an App Service from the plan with Java SE as the runtime 
+                        # Make sure to have --runtime "JAVA|8-jre8"
+                        az webapp create -g $(rg) -p myapp-service-plan -n devopsmela-prod7865 --runtime "JAVA|8-jre8"
+            
+            - task: AzureWebApp@1
+              inputs:
+                azureSubscription: 'azdevsecops10-Udemy01' # Add you own service conection details
+                appType: 'webAppLinux'
+                appName: 'devopsmela-prod7865'
+                package: '$(Pipeline.Workspace)/**/*.jar'
