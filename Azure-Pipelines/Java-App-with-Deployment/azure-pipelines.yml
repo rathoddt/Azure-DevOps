@@ -9,11 +9,85 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+variables:
+  rg: 'az-java-app'
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+# steps:
+# - script: echo Hello, world!
+#   displayName: 'Run a one-line script'
+
+# - script: |
+#     echo Add other tasks to build, test, and deploy your project.
+#     echo See https://aka.ms/yaml
+#   displayName: 'Run a multi-line script'
+
+stages:
+- stage: Build
+  displayName: "Build"
+  jobs:
+    - job: Build
+      displayName: Build job
+      pool:
+        vmImage: ubuntu-latest
+      steps:
+      - task: Maven@4
+        inputs:
+          azureSubscription: 'webapp-01'
+          mavenPomFile: 'pom.xml'
+          publishJUnitResults: true
+          testResultsFiles: '**/surefire-reports/TEST-*.xml'
+          javaHomeOption: 'JDKVersion'
+          mavenVersionOption: 'Default'
+          mavenAuthenticateFeed: false
+          effectivePomSkip: false
+          sonarQubeRunAnalysis: false
+
+      - task: CopyFiles@2
+        inputs:
+          SourceFolder: '$(System.DefaultWorkingDirectory)'
+          Contents: '**/target/*.?(jar|war)'
+          TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+          ArtifactName: 'drop'
+          publishLocation: 'Container'
+  
+- stage: Deploy
+  displayName: Deploy Stage
+  dependsOn: Build
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy
+    pool:
+      vmImage: ubuntu-latest
+    environment: Dev
+    strategy:
+     runOnce:
+       deploy:
+         steps:
+            - task: AzureCLI@2
+              inputs:
+                azureSubscription: 'webapp-01' # Add you own service conection details
+                scriptType: 'bash'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  # Create a resource group
+                        az group create --location eastus2 --name $(rg)
+                                                      
+                        # Create an app service plan of type Linux
+                        az appservice plan create -g $(rg) -n myapp-service-plan --is-linux
+                                                      
+                        # Create an App Service from the plan with Java SE as the runtime 
+                        # Make sure to have --runtime "JAVA|8-jre8"
+                        az webapp create -g $(rg) -p myapp-service-plan -n az-app-mela-prod7865 --runtime "JAVA|8-jre8"
+            
+            - task: AzureWebApp@1
+              inputs:
+                azureSubscription: 'webapp-01' # Add you own service conection details
+                appType: 'webAppLinux'
+                appName: 'az-app-mela-prod7865'
+                package: '$(Pipeline.Workspace)/**/*.jar'
