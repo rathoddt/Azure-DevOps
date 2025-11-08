@@ -11,6 +11,11 @@ TODO: Guide users through getting your code up and running on their own system. 
 # Build and Test
 TODO: Describe and show how to build your code and run the tests. 
 
+## Running app
+```
+htpps://<web-all-url> # home page
+htpps://<web-all-url>/compare/<no> # Commpare number with 50
+
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 
 
