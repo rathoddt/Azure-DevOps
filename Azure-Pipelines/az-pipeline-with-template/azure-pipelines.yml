@@ -6,6 +6,8 @@ resources:
       ref: main
       endpoint: rathoddt
 
+pool: 
+  vmImage: $(vmImage)
 steps:
   - template: Azure-Pipelines/templates/template.yaml@templatesRepo
 
