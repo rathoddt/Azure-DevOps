@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: my-image
-        image: devopsmelacr.azurecr.io/webapp:latest
+        image: aksdevopsacr00.azurecr.io/webapp:latest
         ports:
         - containerPort: 5000
 
