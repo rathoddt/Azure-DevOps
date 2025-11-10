@@ -24,3 +24,11 @@ sudo ./svc.sh uninstall
 ```
 ** - folder/directory level/local
 ```
+
+### AKS , ACR and Azure pipeline
+```
+az aks show -n aks-demo1 -g aks-rg --query identityProfile.kubeletidentity.clientId -o tsv
+az role assignment create --assignee <client-id> \
+  --role AcrPull \
+  --scope $(az acr show -n aksdevopsacr00 --query id -o tsv)
+```  
